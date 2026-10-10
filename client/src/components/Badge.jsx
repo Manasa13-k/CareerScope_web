@@ -1,13 +1,17 @@
 import React from 'react';
 
 export default function Badge({ children, variant = 'default', className = '' }) {
-  let baseStyles = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border';
+  const baseStyles = 'inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium border tracking-wide';
   
   const variants = {
-    default: 'bg-bgSecondary text-warmIvory border-borderColor',
-    lime: 'bg-electricLime/10 text-electricLime border-electricLime/30',
-    lilac: 'bg-softLilac/10 text-softLilac border-softLilac/30',
-    muted: 'bg-bgSecondary text-mutedText border-borderColor',
+    default: 'bg-ivory text-ink border-borderAtlas',
+    mustard: 'bg-mustard-light text-ink border-mustard/40 font-semibold',
+    lime: 'bg-mustard-light text-ink border-mustard/40 font-semibold', // backward compat
+    coral: 'bg-coral-light text-coral-dark border-coral/30 font-semibold',
+    teal: 'bg-teal-pale text-teal border-teal/20 font-semibold',
+    lilac: 'bg-teal-pale text-teal border-teal/20 font-semibold', // backward compat
+    sage: 'bg-sage-light text-ink-light border-borderAtlas',
+    muted: 'bg-ivory text-ink-muted border-borderAtlas',
   };
 
   return (

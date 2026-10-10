@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Compass, Search } from 'lucide-react';
+import { Compass, Search, RotateCcw } from 'lucide-react';
 import CareerCard from '../components/CareerCard';
 import Input from '../components/Input';
 import Select from '../components/Select';
@@ -33,7 +33,7 @@ export default function CareerExplorerPage() {
       const data = await careerService.getCareers(filters);
       setCareers(data);
     } catch (err) {
-      setError(err.message || 'Failed to fetch career paths.');
+      setError(err.message || 'Failed to load career paths.');
     } finally {
       setLoading(false);
     }
@@ -44,25 +44,30 @@ export default function CareerExplorerPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       
-      {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-3xl md:text-4xl font-black text-warmIvory flex items-center space-x-3">
-          <Compass className="w-8 h-8 text-softLilac" />
-          <span>Career Path Explorer</span>
+      {/* Editorial Header */}
+      <div className="border-b border-borderAtlas pb-6 space-y-3">
+        <div className="inline-flex items-center space-x-2 px-3 py-1 bg-coral-light border border-coral/30 rounded-full text-coral-dark text-xs font-bold uppercase tracking-wider">
+          <Compass className="w-3.5 h-3.5 text-coral" />
+          <span>CAREER PATHWAYS DIRECTORY</span>
+        </div>
+        
+        <h1 className="font-serif text-3xl sm:text-5xl font-bold text-teal tracking-tight">
+          Industry Career Explorer
         </h1>
-        <p className="text-mutedText text-sm max-w-2xl">
-          Discover modern industry career roles, skill requirements, and educational progression pathways.
+        
+        <p className="text-ink-light text-sm sm:text-base max-w-2xl leading-relaxed">
+          Discover modern professional careers, requisite domain skills, and their prerequisite undergraduate degrees across 12 economic sectors.
         </p>
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-cardBg border border-borderColor rounded-2xl p-6 space-y-4 shadow-xl">
+      <div className="bg-surface border-2 border-borderAtlas rounded-2xl p-6 sm:p-8 space-y-4 shadow-atlas-sm">
         <div className="flex flex-col sm:flex-row gap-4 items-center">
           <div className="w-full sm:w-1/2">
             <Input
-              placeholder="Search by career title, skill, or role..."
+              placeholder="Search by career role, keyword, or skill..."
               value={filters.search}
               onChange={(e) => handleFilterChange('search', e.target.value)}
             />
@@ -78,24 +83,47 @@ export default function CareerExplorerPage() {
             />
           </div>
         </div>
+
+        {/* Sector Quick Pills */}
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-borderAtlas/60 text-xs">
+          <span className="font-bold text-ink-muted uppercase tracking-wider mr-1">Sector:</span>
+          {SECTORS.slice(0, 7).map((sec) => (
+            <button
+              key={sec}
+              type="button"
+              onClick={() => handleFilterChange('sector', sec)}
+              className={`px-2.5 py-1 rounded-md font-semibold border transition ${
+                filters.sector === sec
+                  ? 'bg-teal text-white border-teal'
+                  : 'bg-ivory border-borderAtlas text-ink-light hover:border-teal'
+              }`}
+            >
+              {sec}
+            </button>
+          ))}
+          {SECTORS.length > 7 && (
+            <span className="text-[11px] text-ink-muted italic pl-1">+ {SECTORS.length - 7} more in dropdown</span>
+          )}
+        </div>
       </div>
 
-      {/* Career Grid */}
+      {/* Career Cards Grid */}
       {loading ? (
-        <LoadingSpinner text="Fetching career pathways database..." />
+        <LoadingSpinner text="Retrieving career pathways..." />
       ) : error ? (
         <ErrorMessage message={error} onRetry={fetchCareers} />
       ) : careers.length === 0 ? (
         <EmptyState
-          title="No career paths found"
-          description="Try searching with a different keyword or selecting 'All' sectors."
+          title="No career pathways found"
+          description="Try broadening your sector selection or clearing your keyword search."
           onAction={() => setFilters({ search: '', sector: 'All' })}
-          actionText="Reset Filters"
+          actionText="Reset Career Filters"
         />
       ) : (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center text-xs font-semibold text-mutedText">
-            <span>Showing {careers.length} career pathways</span>
+        <div className="space-y-6">
+          <div className="flex justify-between items-center text-xs font-bold text-ink-muted uppercase tracking-wider border-b border-borderAtlas pb-2">
+            <span>Mapped {careers.length} vocational and professional roles</span>
+            <span className="font-mono text-teal">INDUSTRY ROADMAP</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

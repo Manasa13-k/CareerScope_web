@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, ArrowRight, ArrowLeft, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { Sparkles, ArrowRight, ArrowLeft, CheckCircle2, ShieldAlert, Compass } from 'lucide-react';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import ProgressBar from '../components/ProgressBar';
@@ -30,7 +30,7 @@ export default function InterestAssessmentPage() {
       const qData = await assessmentService.getQuestions();
       setQuestions(qData);
     } catch (err) {
-      setError(err.message || 'Failed to load assessment questions.');
+      setError(err.message || 'Failed to retrieve assessment questions.');
     } finally {
       setLoading(false);
     }
@@ -65,69 +65,70 @@ export default function InterestAssessmentPage() {
       const res = await assessmentService.submitAssessment(answerList);
       setResults(res);
     } catch (err) {
-      setError(err.message || 'Failed to submit assessment.');
+      setError(err.message || 'Failed to submit assessment answers.');
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) return <LoadingSpinner text="Loading Assessment..." />;
+  if (loading) return <LoadingSpinner text="Retrieving assessment questionnaire..." />;
   if (error && !results) return <ErrorMessage message={error} onRetry={fetchQuestions} />;
 
   // RESULTS SCREEN
   if (results) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-12 space-y-8 animate-fade-in">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 animate-fade-in">
         <div className="text-center space-y-3">
-          <div className="w-16 h-16 bg-electricLime/10 border border-electricLime/30 rounded-2xl flex items-center justify-center mx-auto text-electricLime">
-            <CheckCircle2 className="w-8 h-8" />
+          <div className="w-16 h-16 bg-mustard-light border border-mustard/40 rounded-2xl flex items-center justify-center mx-auto text-ink shadow-atlas-sm">
+            <CheckCircle2 className="w-8 h-8 text-teal" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-black text-warmIvory">
-            Your Interest Profile
+          <span className="text-xs font-bold uppercase tracking-widest text-coral">EVALUATION COMPLETE</span>
+          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-teal">
+            Your Interest Profile Map
           </h1>
-          <p className="text-mutedText text-sm max-w-lg mx-auto">
-            Based on your answers, here is a breakdown of your key domain inclinations.
+          <p className="text-ink-light text-sm max-w-lg mx-auto leading-relaxed">
+            Based on your scenario responses, here is the breakdown of your primary cognitive and domain affinities.
           </p>
         </div>
 
-        <Card className="space-y-6">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-softLilac border-b border-borderColor pb-3">
-            Domain Alignment Summary
+        <div className="bg-surface border-2 border-borderAtlas rounded-2xl p-6 sm:p-8 space-y-6 shadow-atlas-sm">
+          <h3 className="font-serif text-xl font-bold text-teal border-b border-borderAtlas pb-3">
+            Domain Affinity Breakdown
           </h3>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {results.formattedProfile && results.formattedProfile.map((item) => {
-              let badgeColor = 'bg-electricLime/10 border-electricLime/30 text-electricLime';
+              let badgeColor = 'bg-mustard-light border-mustard/40 text-ink';
               if (item.level === 'Medium') {
-                badgeColor = 'bg-softLilac/10 border-softLilac/30 text-softLilac';
+                badgeColor = 'bg-teal-pale border-teal/20 text-teal';
               } else if (item.level === 'Low') {
-                badgeColor = 'bg-bgSecondary border-borderColor text-mutedText';
+                badgeColor = 'bg-ivory border-borderAtlas text-ink-muted';
               }
 
               return (
-                <div key={item.category} className="bg-bgSecondary border border-borderColor rounded-xl p-4 flex justify-between items-center">
-                  <span className="font-semibold text-warmIvory text-sm">{item.category}</span>
+                <div key={item.category} className="bg-ivory border border-borderAtlas rounded-xl p-4 flex justify-between items-center">
+                  <span className="font-bold text-ink text-sm">{item.category}</span>
                   <span className={`px-3 py-1 rounded-full border text-xs font-bold ${badgeColor}`}>
-                    {item.level}
+                    {item.level} Affinity
                   </span>
                 </div>
               );
             })}
           </div>
 
-          <div className="bg-cardBg border border-borderColor rounded-xl p-4 text-xs text-mutedText flex items-start space-x-3">
-            <ShieldAlert className="w-5 h-5 text-softLilac shrink-0 mt-0.5" />
+          <div className="bg-sage-light border border-borderAtlas rounded-xl p-4 text-xs text-ink-light flex items-start space-x-3">
+            <ShieldAlert className="w-5 h-5 text-teal shrink-0 mt-0.5" />
             <p className="leading-relaxed">
-              <strong>Disclaimer:</strong> This profile reflects your indicated preferences and academic background. It is a guide to explore matching options and does not guarantee specific career outcomes or institute admissions.
+              <strong>Methodology Notice:</strong> This profile reflects your indicated academic affinities and preferences. It is designed to guide exploration and does not predict career success or guarantee university admission.
             </p>
           </div>
-        </Card>
+        </div>
 
-        <div className="text-center pt-4">
+        <div className="text-center pt-2">
           <Button
             size="lg"
             onClick={() => navigate('/recommendations')}
-            className="shadow-xl shadow-electricLime/10"
+            className="shadow-atlas"
           >
             <span>See My Course Recommendations</span>
             <ArrowRight className="w-5 h-5 ml-2 inline" />
@@ -137,64 +138,65 @@ export default function InterestAssessmentPage() {
     );
   }
 
-  // MULTI-STEP QUIZ INTERFACE
+  // MULTI-STEP QUESTIONNAIRE
   const currentQuestion = questions[currentStep];
   const isAnswered = selectedAnswers[currentStep] !== undefined;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-12 space-y-8">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
       
-      {/* Header & Progress */}
+      {/* Header & Progress Indicator */}
       <div className="space-y-4">
-        <div className="flex items-center space-x-2 text-softLilac text-xs font-bold uppercase tracking-wider">
-          <Sparkles className="w-4 h-4 text-electricLime" />
-          <span>Interest Assessment</span>
+        <div className="flex items-center space-x-2 text-teal text-xs font-bold uppercase tracking-wider">
+          <Compass className="w-4 h-4 text-coral" />
+          <span>CAREERSCOPE INTEREST QUESTIONNAIRE</span>
         </div>
         <ProgressBar currentStep={currentStep + 1} totalSteps={questions.length} />
       </div>
 
       {/* Question Card */}
       {currentQuestion && (
-        <Card className="space-y-6">
+        <div className="bg-surface border-2 border-borderAtlas rounded-2xl p-6 sm:p-8 space-y-6 shadow-atlas-sm">
           
-          <div className="space-y-2">
-            <span className="text-xs font-semibold text-mutedText uppercase tracking-wider">
-              Question {currentStep + 1} of {questions.length}
+          <div className="space-y-2 border-b border-borderAtlas pb-4">
+            <span className="text-xs font-mono font-bold text-ink-muted uppercase">
+              QUESTION {currentStep + 1} OF {questions.length} • {currentQuestion.category}
             </span>
-            <h2 className="text-xl md:text-2xl font-bold text-warmIvory leading-snug">
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-teal leading-snug">
               {currentQuestion.question}
             </h2>
           </div>
 
           {/* Options */}
-          <div className="space-y-3 pt-2">
+          <div className="space-y-3 pt-1">
             {currentQuestion.options.map((opt, idx) => {
               const selected = selectedAnswers[currentStep] === opt.categories;
               return (
                 <button
                   key={idx}
+                  type="button"
                   onClick={() => handleSelectOption(currentStep, opt.categories)}
-                  className={`w-full text-left p-4 rounded-xl border text-sm font-medium transition duration-200 flex items-start space-x-3 ${
+                  className={`w-full text-left p-4 rounded-xl border text-sm transition-all flex items-start space-x-3 group ${
                     selected
-                      ? 'bg-electricLime/10 border-electricLime text-warmIvory'
-                      : 'bg-bgSecondary border-borderColor text-warmIvory/80 hover:border-softLilac hover:text-warmIvory'
+                      ? 'bg-mustard-light/70 border-mustard-dark text-ink shadow-atlas-sm'
+                      : 'bg-ivory border-borderAtlas text-ink-light hover:border-teal hover:text-teal'
                   }`}
                 >
                   <div
                     className={`w-5 h-5 rounded-full border flex items-center justify-center mt-0.5 shrink-0 ${
-                      selected ? 'border-electricLime bg-electricLime text-bgMain' : 'border-borderColor'
+                      selected ? 'border-coral bg-coral text-white' : 'border-borderAtlas bg-surface group-hover:border-teal'
                     }`}
                   >
-                    {selected && <CheckCircle2 className="w-4 h-4" />}
+                    {selected && <CheckCircle2 className="w-3.5 h-3.5" />}
                   </div>
-                  <span className="leading-relaxed">{opt.text}</span>
+                  <span className="leading-relaxed font-medium">{opt.text}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* Controls */}
-          <div className="flex justify-between items-center pt-6 border-t border-borderColor">
+          {/* Step Controls */}
+          <div className="flex justify-between items-center pt-6 border-t border-borderAtlas">
             <Button
               variant="outline"
               size="sm"
@@ -203,7 +205,7 @@ export default function InterestAssessmentPage() {
               className="flex items-center space-x-1"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Back</span>
+              <span>Previous</span>
             </Button>
 
             <Button
@@ -217,7 +219,7 @@ export default function InterestAssessmentPage() {
             </Button>
           </div>
 
-        </Card>
+        </div>
       )}
 
     </div>

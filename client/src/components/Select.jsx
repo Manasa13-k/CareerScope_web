@@ -14,8 +14,8 @@ export default function Select({
   return (
     <div className={`space-y-1.5 ${className}`}>
       {label && (
-        <label className="block text-xs font-semibold text-mutedText uppercase tracking-wider">
-          {label} {required && <span className="text-electricLime">*</span>}
+        <label className="block text-xs font-bold text-ink-light uppercase tracking-wider">
+          {label} {required && <span className="text-coral">*</span>}
         </label>
       )}
       <select
@@ -23,22 +23,22 @@ export default function Select({
         value={value}
         onChange={onChange}
         required={required}
-        className={`w-full px-4 py-3 bg-cardBg border ${
-          error ? 'border-red-500' : 'border-borderColor'
-        } rounded-xl text-warmIvory focus:outline-none focus:border-softLilac transition text-sm cursor-pointer`}
+        className={`w-full px-3.5 py-2.5 bg-surface border ${
+          error ? 'border-coral focus:ring-coral/20' : 'border-borderAtlas focus:border-teal focus:ring-teal/20'
+        } rounded-lg text-ink focus:outline-none focus:ring-2 transition text-sm cursor-pointer shadow-atlas-sm`}
       >
         {placeholder && <option value="" disabled>{placeholder}</option>}
         {options.map((opt) => {
           const val = typeof opt === 'object' ? opt.value : opt;
           const lbl = typeof opt === 'object' ? opt.label : opt;
           return (
-            <option key={val} value={val} className="bg-cardBg text-warmIvory">
+            <option key={val} value={val} className="bg-surface text-ink">
               {lbl}
             </option>
           );
         })}
       </select>
-      {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
+      {error && <p className="text-xs text-coral-dark mt-1 font-medium">{error}</p>}
     </div>
   );
 }

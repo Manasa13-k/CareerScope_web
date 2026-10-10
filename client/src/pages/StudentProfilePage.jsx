@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Sparkles, Check, Save } from 'lucide-react';
+import { User, Sparkles, Check, Save, Compass } from 'lucide-react';
 import Input from '../components/Input';
 import Select from '../components/Select';
 import Button from '../components/Button';
@@ -112,59 +112,64 @@ export default function StudentProfilePage() {
         skills: skillsArray,
       });
 
-      setSuccessMsg('Profile saved successfully!');
+      setSuccessMsg('Profile calibrated successfully! Recommendations updated.');
       setTimeout(() => {
         setSuccessMsg('');
-      }, 3000);
+      }, 4000);
     } catch (err) {
-      setError(err.message || 'Failed to update profile.');
+      setError(err.message || 'Failed to update student profile.');
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <LoadingSpinner text="Loading profile..." />;
+  if (loading) return <LoadingSpinner text="Retrieving student profile..." />;
   if (error) return <ErrorMessage message={error} onRetry={fetchProfile} />;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-warmIvory flex items-center space-x-2">
-            <User className="w-8 h-8 text-electricLime" />
-            <span>Student Profile</span>
+      {/* Editorial Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-borderAtlas pb-6">
+        <div className="space-y-2">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 bg-mustard-light border border-mustard/40 rounded-full text-ink text-xs font-bold uppercase tracking-wider">
+            <User className="w-3.5 h-3.5 text-teal" />
+            <span>STUDENT CALIBRATION</span>
+          </div>
+          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-teal tracking-tight">
+            Academic & Interest Profile
           </h1>
-          <p className="text-mutedText text-sm mt-1">
-            Customize your academic background and domain preferences to refine recommendations
+          <p className="text-ink-light text-sm max-w-xl leading-relaxed">
+            Specify your 11th–12th grade Intermediate stream, core subjects, and personal interests to refine course eligibility and match percentages.
           </p>
         </div>
 
         <Button
           onClick={() => navigate('/assessment')}
           variant="secondary"
-          size="sm"
-          className="flex items-center space-x-1.5"
+          size="md"
+          className="flex items-center space-x-1.5 shadow-atlas-sm shrink-0"
         >
-          <Sparkles className="w-4 h-4" />
-          <span>Take Assessment</span>
+          <Sparkles className="w-4 h-4 text-ink" />
+          <span>Take Interest Quiz</span>
         </Button>
       </div>
 
       {successMsg && (
-        <div className="bg-electricLime/10 border border-electricLime/30 text-electricLime p-4 rounded-xl text-sm font-semibold flex items-center space-x-2 animate-fade-in">
-          <Check className="w-5 h-5" />
+        <div className="bg-sage-light border border-teal text-teal p-4 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-atlas-sm">
+          <Check className="w-5 h-5 text-teal shrink-0" />
           <span>{successMsg}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-8">
         
-        {/* Personal & Academic Details */}
-        <Card className="space-y-6">
-          <h2 className="text-lg font-bold text-warmIvory border-b border-borderColor pb-3">
-            Academic Background
-          </h2>
+        {/* Academic Foundation Card */}
+        <div className="bg-surface border-2 border-borderAtlas rounded-2xl p-6 sm:p-8 space-y-6 shadow-atlas-sm">
+          <div className="border-b border-borderAtlas pb-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-coral">ACADEMIC FOUNDATION</span>
+            <h2 className="font-serif text-2xl font-bold text-teal">High School Qualification</h2>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
@@ -181,39 +186,42 @@ export default function StudentProfilePage() {
               value={formData.stream}
               onChange={(e) => setFormData({ ...formData, stream: e.target.value })}
               options={STREAMS}
-              placeholder="Select your Intermediate Stream"
+              placeholder="Select Intermediate Stream"
               required
             />
           </div>
 
           <Input
-            label="Core Subjects (Comma separated)"
+            label="Core High School Subjects (Comma separated)"
             name="subjects"
             value={formData.subjects}
             onChange={(e) => setFormData({ ...formData, subjects: e.target.value })}
-            placeholder="e.g. Mathematics, Physics, Computer Science"
+            placeholder="e.g. Mathematics, Physics, Chemistry, Computer Science"
           />
 
           <Input
-            label="Current Skills (Comma separated)"
+            label="Current Skills & Talents (Comma separated)"
             name="skills"
             value={formData.skills}
             onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
-            placeholder="e.g. Logic, Problem Solving, Writing, Coding"
+            placeholder="e.g. Logical Reasoning, Writing, Illustration, Basic Coding"
           />
-        </Card>
+        </div>
 
         {/* Interests Selection */}
-        <Card className="space-y-4">
-          <div className="flex justify-between items-center border-b border-borderColor pb-3">
+        <div className="bg-surface border-2 border-borderAtlas rounded-2xl p-6 sm:p-8 space-y-5 shadow-atlas-sm">
+          <div className="flex justify-between items-center border-b border-borderAtlas pb-3">
             <div>
-              <h2 className="text-lg font-bold text-warmIvory">Areas of Interest</h2>
-              <p className="text-xs text-mutedText">Select subjects or activities you enjoy</p>
+              <span className="text-xs font-bold uppercase tracking-widest text-mustard-dark">COGNITIVE AFFINITY</span>
+              <h2 className="font-serif text-2xl font-bold text-teal">Areas of Interest</h2>
+              <p className="text-xs text-ink-light mt-0.5">Select domains you naturally enjoy exploring.</p>
             </div>
-            <span className="text-xs font-semibold text-softLilac">{formData.interests.length} Selected</span>
+            <span className="text-xs font-bold font-mono text-teal bg-teal-pale px-2.5 py-1 rounded border border-teal/20">
+              {formData.interests.length} Selected
+            </span>
           </div>
 
-          <div className="flex flex-wrap gap-2 pt-2">
+          <div className="flex flex-wrap gap-2 pt-1">
             {INTEREST_OPTIONS.map((interest) => {
               const selected = formData.interests.includes(interest);
               return (
@@ -221,31 +229,34 @@ export default function StudentProfilePage() {
                   type="button"
                   key={interest}
                   onClick={() => toggleInterest(interest)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-semibold border transition flex items-center space-x-1.5 ${
+                  className={`px-3.5 py-2 rounded-lg text-xs font-semibold border transition flex items-center space-x-1.5 ${
                     selected
-                      ? 'bg-electricLime text-bgMain border-electricLime'
-                      : 'bg-bgSecondary text-mutedText border-borderColor hover:border-softLilac hover:text-warmIvory'
+                      ? 'bg-mustard text-ink border-mustard-dark shadow-atlas-sm'
+                      : 'bg-ivory text-ink-light border-borderAtlas hover:border-teal hover:text-teal'
                   }`}
                 >
-                  {selected && <Check className="w-3.5 h-3.5" />}
+                  {selected && <Check className="w-3.5 h-3.5 text-ink" />}
                   <span>{interest}</span>
                 </button>
               );
             })}
           </div>
-        </Card>
+        </div>
 
         {/* Career Sectors Selection */}
-        <Card className="space-y-4">
-          <div className="flex justify-between items-center border-b border-borderColor pb-3">
+        <div className="bg-surface border-2 border-borderAtlas rounded-2xl p-6 sm:p-8 space-y-5 shadow-atlas-sm">
+          <div className="flex justify-between items-center border-b border-borderAtlas pb-3">
             <div>
-              <h2 className="text-lg font-bold text-warmIvory">Preferred Career Sectors</h2>
-              <p className="text-xs text-mutedText">Select industry domains you feel drawn towards</p>
+              <span className="text-xs font-bold uppercase tracking-widest text-coral">ECONOMIC SECTORS</span>
+              <h2 className="font-serif text-2xl font-bold text-teal">Preferred Industry Sectors</h2>
+              <p className="text-xs text-ink-light mt-0.5">Select industry sectors you feel drawn toward.</p>
             </div>
-            <span className="text-xs font-semibold text-softLilac">{formData.preferredSectors.length} Selected</span>
+            <span className="text-xs font-mono font-bold text-coral bg-coral-light px-2.5 py-1 rounded border border-coral/30">
+              {formData.preferredSectors.length} Selected
+            </span>
           </div>
 
-          <div className="flex flex-wrap gap-2 pt-2">
+          <div className="flex flex-wrap gap-2 pt-1">
             {SECTOR_OPTIONS.map((sector) => {
               const selected = formData.preferredSectors.includes(sector);
               return (
@@ -253,25 +264,25 @@ export default function StudentProfilePage() {
                   type="button"
                   key={sector}
                   onClick={() => toggleSector(sector)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-semibold border transition flex items-center space-x-1.5 ${
+                  className={`px-3.5 py-2 rounded-lg text-xs font-semibold border transition flex items-center space-x-1.5 ${
                     selected
-                      ? 'bg-softLilac text-bgMain border-softLilac'
-                      : 'bg-bgSecondary text-mutedText border-borderColor hover:border-electricLime hover:text-warmIvory'
+                      ? 'bg-teal text-white border-teal shadow-atlas-sm'
+                      : 'bg-ivory text-ink-light border-borderAtlas hover:border-teal hover:text-teal'
                   }`}
                 >
-                  {selected && <Check className="w-3.5 h-3.5" />}
+                  {selected && <Check className="w-3.5 h-3.5 text-white" />}
                   <span>{sector}</span>
                 </button>
               );
             })}
           </div>
-        </Card>
+        </div>
 
-        {/* Save Button */}
-        <div className="flex justify-end gap-4 pt-2">
-          <Button type="submit" disabled={saving} size="lg" className="min-w-[160px]">
+        {/* Save Controls */}
+        <div className="flex justify-end pt-2">
+          <Button type="submit" disabled={saving} size="lg" className="min-w-[180px] shadow-atlas">
             <Save className="w-4 h-4 mr-2" />
-            <span>{saving ? 'Saving...' : 'Save Profile'}</span>
+            <span>{saving ? 'Calibrating...' : 'Save Profile'}</span>
           </Button>
         </div>
 

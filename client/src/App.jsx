@@ -20,7 +20,7 @@ import ShortlistPage from './pages/ShortlistPage';
 
 export default function App() {
   return (
-    <div className="flex flex-col min-h-screen bg-bgMain text-warmIvory selection:bg-electricLime selection:text-bgMain">
+    <div className="flex flex-col min-h-screen bg-ivory text-ink selection:bg-mustard selection:text-ink">
       <Navbar />
       <main className="flex-grow">
         <Routes>

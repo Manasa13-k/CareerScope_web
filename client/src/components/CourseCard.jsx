@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, BookOpen, Bookmark, Scale, ArrowRight, Check } from 'lucide-react';
+import { Clock, Bookmark, Scale, ArrowRight, Check, BookOpen } from 'lucide-react';
 import Card from './Card';
 import Badge from './Badge';
 import MatchScore from './MatchScore';
@@ -17,22 +17,22 @@ export default function CourseCard({
   const courseId = course._id || course.id;
 
   return (
-    <Card className="flex flex-col justify-between h-full group hover:border-softLilac transition-all duration-300">
+    <Card className="flex flex-col justify-between h-full bg-surface border-borderAtlas hover:border-teal/50 hover:shadow-atlas transition-all duration-300 group relative">
       <div className="space-y-4">
         
-        {/* Header Badges & Match */}
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex flex-wrap gap-1.5">
+        {/* Stream Badges & Duration Header */}
+        <div className="flex items-start justify-between gap-2 border-b border-borderAtlas/60 pb-3">
+          <div className="flex flex-wrap gap-1.5 items-center">
             {course.streams && course.streams.map((st) => (
-              <Badge key={st} variant="lime">
-                {st}
+              <Badge key={st} variant={st === 'MPC' ? 'mustard' : st === 'BiPC' ? 'coral' : 'sage'}>
+                {st} Stream
               </Badge>
             ))}
             {course.duration && (
-              <Badge variant="muted" className="flex items-center space-x-1">
-                <Clock className="w-3 h-3" />
+              <span className="inline-flex items-center space-x-1 text-xs text-ink-muted pl-1">
+                <Clock className="w-3.5 h-3.5 text-teal" />
                 <span>{course.duration}</span>
-              </Badge>
+              </span>
             )}
           </div>
 
@@ -41,64 +41,68 @@ export default function CourseCard({
           )}
         </div>
 
-        {/* Title */}
-        <div>
-          <h3 className="text-lg font-bold text-warmIvory group-hover:text-electricLime transition">
+        {/* Degree Subtitle & Course Title */}
+        <div className="space-y-1">
+          <span className="text-[11px] uppercase tracking-wider text-teal font-bold block">
+            {course.degreeType}
+          </span>
+          <h3 className="font-serif text-xl font-bold text-ink group-hover:text-teal transition-colors leading-snug">
             <Link to={`/courses/${courseId}`}>{course.name}</Link>
           </h3>
-          <p className="text-xs text-softLilac font-medium mt-0.5">{course.degreeType}</p>
         </div>
 
         {/* Description */}
-        <p className="text-mutedText text-xs leading-relaxed line-clamp-2">
+        <p className="text-ink-light text-xs leading-relaxed line-clamp-3 font-normal">
           {course.description}
         </p>
 
         {/* Match Explanation if passed */}
         {explanation && (
-          <div className="bg-bgSecondary/80 border border-borderColor rounded-xl p-3 text-xs text-warmIvory/90 leading-relaxed italic">
+          <div className="bg-sage-light/70 border border-borderAtlas rounded-lg p-3 text-xs text-teal leading-relaxed font-serif italic">
             "{explanation}"
           </div>
         )}
 
-        {/* Relevant Interests / Sectors */}
-        <div className="space-y-2 pt-2 border-t border-borderColor/50">
-          <div className="flex flex-wrap gap-1">
-            {course.sectors && course.sectors.map((sec) => (
-              <span key={sec} className="px-2 py-0.5 bg-bgSecondary text-mutedText text-[11px] rounded-md font-medium">
-                {sec}
-              </span>
-            ))}
-            {course.interests && course.interests.slice(0, 3).map((interest) => (
-              <span key={interest} className="px-2 py-0.5 bg-cardBg border border-borderColor text-softLilac text-[11px] rounded-md font-medium">
-                {interest}
-              </span>
-            ))}
+        {/* Main Subjects / Focus Areas */}
+        {course.mainSubjects && course.mainSubjects.length > 0 && (
+          <div className="pt-2 border-t border-borderAtlas/40">
+            <p className="text-[10px] uppercase tracking-widest text-ink-muted font-bold mb-1.5 flex items-center space-x-1">
+              <BookOpen className="w-3 h-3 text-mustard-dark" />
+              <span>Core Subject Areas</span>
+            </p>
+            <div className="flex flex-wrap gap-1">
+              {course.mainSubjects.slice(0, 3).map((sub, i) => (
+                <span key={i} className="px-2 py-0.5 bg-ivory border border-borderAtlas/80 text-ink text-[11px] rounded font-medium">
+                  {sub}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
       </div>
 
-      {/* Action Buttons */}
-      <div className="pt-5 mt-4 border-t border-borderColor flex items-center justify-between gap-2">
+      {/* Action Footer */}
+      <div className="pt-4 mt-4 border-t border-borderAtlas flex items-center justify-between gap-3">
         <Link
           to={`/courses/${courseId}`}
-          className="inline-flex items-center space-x-1.5 text-xs font-bold text-electricLime hover:underline"
+          className="inline-flex items-center space-x-1 text-xs font-bold text-teal hover:text-coral transition-colors"
         >
-          <span>View Details</span>
+          <span>Explore Course</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
 
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center space-x-1.5">
           {onCompare && (
             <button
               onClick={() => onCompare(course)}
-              className={`p-2 rounded-xl text-xs font-semibold border transition ${
+              className={`p-1.5 rounded-lg text-xs font-medium border transition ${
                 isCompared
-                  ? 'bg-softLilac/20 border-softLilac text-softLilac'
-                  : 'bg-bgSecondary border-borderColor text-mutedText hover:text-warmIvory hover:border-softLilac'
+                  ? 'bg-teal text-white border-teal'
+                  : 'bg-surface border-borderAtlas text-ink-light hover:text-teal hover:border-teal'
               }`}
-              title={isCompared ? 'Added to Compare' : 'Add to Compare'}
+              title={isCompared ? 'Added to Comparison' : 'Add to Comparison'}
+              aria-label="Compare course"
             >
               <Scale className="w-4 h-4" />
             </button>
@@ -107,12 +111,13 @@ export default function CourseCard({
           {onSave && (
             <button
               onClick={() => onSave(courseId)}
-              className={`p-2 rounded-xl text-xs font-semibold border transition ${
+              className={`p-1.5 rounded-lg text-xs font-medium border transition ${
                 isSaved
-                  ? 'bg-electricLime/20 border-electricLime text-electricLime'
-                  : 'bg-bgSecondary border-borderColor text-mutedText hover:text-warmIvory hover:border-electricLime'
+                  ? 'bg-coral text-white border-coral'
+                  : 'bg-surface border-borderAtlas text-ink-light hover:text-coral hover:border-coral'
               }`}
               title={isSaved ? 'Saved in Shortlist' : 'Save to Shortlist'}
+              aria-label="Save course"
             >
               {isSaved ? <Check className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
             </button>

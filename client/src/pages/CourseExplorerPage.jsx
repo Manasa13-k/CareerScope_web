@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, BookOpen } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { Search, Filter, BookOpen, Compass, RotateCcw } from 'lucide-react';
 import CourseCard from '../components/CourseCard';
 import Input from '../components/Input';
 import Select from '../components/Select';
@@ -15,6 +16,9 @@ const INTERESTS = ['All', 'Technology', 'Mathematics', 'Biology', 'Design', 'Bus
 const DURATIONS = ['All', '3 Years', '4 Years', '5.5 Years'];
 
 export default function CourseExplorerPage() {
+  const [searchParams] = useSearchParams();
+  const initialSector = searchParams.get('sector') || 'All';
+
   const [courses, setCourses] = useState([]);
   const [shortlist, setShortlist] = useState({ courses: [] });
   const [comparedCourses, setComparedCourses] = useState([]);
@@ -24,7 +28,7 @@ export default function CourseExplorerPage() {
   const [filters, setFilters] = useState({
     search: '',
     stream: 'All',
-    sector: 'All',
+    sector: initialSector,
     interest: 'All',
     duration: 'All',
   });
@@ -48,7 +52,7 @@ export default function CourseExplorerPage() {
       setCourses(data);
       setShortlist(sl);
     } catch (err) {
-      setError(err.message || 'Failed to fetch courses.');
+      setError(err.message || 'Failed to retrieve course catalogue.');
     } finally {
       setLoading(false);
     }
@@ -56,6 +60,16 @@ export default function CourseExplorerPage() {
 
   const handleFilterChange = (field, value) => {
     setFilters(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleResetFilters = () => {
+    setFilters({
+      search: '',
+      stream: 'All',
+      sector: 'All',
+      interest: 'All',
+      duration: 'All',
+    });
   };
 
   const handleToggleSave = async (courseId) => {
@@ -94,31 +108,39 @@ export default function CourseExplorerPage() {
   const isCourseCompared = (courseId) => comparedCourses.some(c => (c._id || c.id) === courseId);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       
-      {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-3xl md:text-4xl font-black text-warmIvory flex items-center space-x-3">
-          <BookOpen className="w-8 h-8 text-electricLime" />
-          <span>Course Explorer</span>
+      {/* Editorial Header */}
+      <div className="border-b border-borderAtlas pb-6 space-y-3">
+        <div className="inline-flex items-center space-x-2 px-3 py-1 bg-mustard-light border border-mustard/40 rounded-full text-ink text-xs font-bold uppercase tracking-wider">
+          <BookOpen className="w-3.5 h-3.5 text-teal" />
+          <span>CURATED DEGREE DIRECTORY</span>
+        </div>
+        
+        <h1 className="font-serif text-3xl sm:text-5xl font-bold text-teal tracking-tight">
+          Undergraduate Course Directory
         </h1>
-        <p className="text-mutedText text-sm max-w-2xl">
-          Discover degree programs, higher studies opportunities, and skill outcomes across all major intermediate streams.
+        
+        <p className="text-ink-light text-sm sm:text-base max-w-2xl leading-relaxed">
+          Explore realistic undergraduate degrees matching Intermediate foundations in MPC, BiPC, MEC, and CEC. Compare eligibility, core curricula, and post-graduate pathways.
         </p>
       </div>
 
-      {/* Filter Control Bar */}
-      <div className="bg-cardBg border border-borderColor rounded-2xl p-6 space-y-4 shadow-xl">
-        <div className="flex flex-col md:flex-row gap-4 items-center">
-          <div className="w-full md:w-1/3 relative">
+      {/* Filter Control Console */}
+      <div className="bg-surface border-2 border-borderAtlas rounded-2xl p-6 sm:p-8 space-y-5 shadow-atlas-sm">
+        
+        <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+          {/* Search Input */}
+          <div className="w-full lg:w-1/3">
             <Input
-              placeholder="Search by course name, skills, or degree..."
+              placeholder="Search by degree name, subject, or career role..."
               value={filters.search}
               onChange={(e) => handleFilterChange('search', e.target.value)}
             />
           </div>
 
-          <div className="w-full md:w-2/3 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {/* Filter Dropdowns */}
+          <div className="w-full lg:w-2/3 grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Select
               label="Stream"
               value={filters.stream}
@@ -127,14 +149,14 @@ export default function CourseExplorerPage() {
               placeholder=""
             />
             <Select
-              label="Sector"
+              label="Domain Sector"
               value={filters.sector}
               onChange={(e) => handleFilterChange('sector', e.target.value)}
               options={SECTORS}
               placeholder=""
             />
             <Select
-              label="Interest"
+              label="Interest Area"
               value={filters.interest}
               onChange={(e) => handleFilterChange('interest', e.target.value)}
               options={INTERESTS}
@@ -149,24 +171,57 @@ export default function CourseExplorerPage() {
             />
           </div>
         </div>
+
+        {/* Quick Stream Filter Pills */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-borderAtlas/60 text-xs">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-bold text-ink-muted uppercase tracking-wider mr-1">Stream Filter:</span>
+            {STREAMS.map((st) => (
+              <button
+                key={st}
+                type="button"
+                onClick={() => handleFilterChange('stream', st)}
+                className={`px-2.5 py-1 rounded-md font-semibold border transition ${
+                  filters.stream === st
+                    ? 'bg-teal text-white border-teal'
+                    : 'bg-ivory border-borderAtlas text-ink-light hover:border-teal'
+                }`}
+              >
+                {st}
+              </button>
+            ))}
+          </div>
+
+          {(filters.search || filters.stream !== 'All' || filters.sector !== 'All' || filters.interest !== 'All' || filters.duration !== 'All') && (
+            <button
+              onClick={handleResetFilters}
+              className="text-xs font-semibold text-coral hover:underline inline-flex items-center space-x-1"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset All Filters</span>
+            </button>
+          )}
+        </div>
+
       </div>
 
       {/* Results Section */}
       {loading ? (
-        <LoadingSpinner text="Fetching courses database..." />
+        <LoadingSpinner text="Cataloguing degree entries..." />
       ) : error ? (
         <ErrorMessage message={error} onRetry={fetchCourses} />
       ) : courses.length === 0 ? (
         <EmptyState
-          title="No courses match your filters"
-          description="Try broadening your stream or sector search criteria."
-          onAction={() => setFilters({ search: '', stream: 'All', sector: 'All', interest: 'All', duration: 'All' })}
-          actionText="Reset Filters"
+          title="No courses match the active filters"
+          description="Try selecting 'All' streams or clearing your keyword search to broaden the results."
+          onAction={handleResetFilters}
+          actionText="Clear All Filters"
         />
       ) : (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center text-xs font-semibold text-mutedText">
-            <span>Showing {courses.length} degree programs</span>
+        <div className="space-y-6">
+          <div className="flex justify-between items-center text-xs font-bold text-ink-muted uppercase tracking-wider border-b border-borderAtlas pb-2">
+            <span>Displaying {courses.length} educational degree programs</span>
+            <span className="font-mono text-teal">CAREERSCOPE DIRECTORY</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
